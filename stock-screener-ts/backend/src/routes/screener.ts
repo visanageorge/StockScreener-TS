@@ -1,8 +1,9 @@
 import { Router } from "express";
 import type { Request, Response } from "express";
-import { prisma } from "../db";
-import { requireAuth } from "../auth";
-import { getOrRefreshSnapshot } from "../services/snapshot";
+import { prisma } from "../db.js";
+import { requireAuth } from "../auth.js";
+import { getOrRefreshSnapshot } from "../services/snapshot.js";
+
 
 export const screenerRouter = Router();
 screenerRouter.use(requireAuth);
@@ -12,27 +13,30 @@ screenerRouter.get("/", async (req: Request, res: Response) => {
 
   const list = await prisma.watchlist.findMany({
     where: { userId },
-    include: { company: true },
     orderBy: { createdAt: "desc" }
   });
+
+  const companyIds = list.map((x) => x.companyId);
+  const companies = await prisma.company.findMany({ where: { id: { in: companyIds } } });
+  const cmap = new Map(companies.map((c) => [c.id, c]));
 
   const results: any[] = [];
 
   for (const item of list) {
-    const symbol = item.company.symbol;
+    const c = cmap.get(item.companyId);
+    const symbol = c?.symbol ?? "";
 
     try {
       const snap = await getOrRefreshSnapshot(symbol);
       results.push({
-        ...snap.data,
         symbol,
-        name: item.company.name,
+        name: c?.name ?? null,
         fetchedAt: snap.fetchedAt,
         source: snap.source,
-        });
-
+        ...snap.data
+      });
     } catch {
-      results.push({ symbol, name: item.company.name, error: "failed_to_fetch_metrics" });
+      results.push({ symbol, name: c?.name ?? null, error: "failed_to_fetch_metrics" });
     }
   }
 

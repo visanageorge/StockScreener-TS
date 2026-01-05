@@ -1,7 +1,8 @@
 import { Router } from "express";
 import type { Request, Response } from "express";
-import { prisma } from "../db";
-import { requireAuth } from "../auth";
+import { prisma } from "../db.js";
+import { requireAuth } from "../auth.js";
+
 
 export const watchlistRouter = Router();
 watchlistRouter.use(requireAuth);
@@ -11,16 +12,25 @@ watchlistRouter.get("/", async (req: Request, res: Response) => {
 
   const items = await prisma.watchlist.findMany({
     where: { userId },
-    orderBy: { createdAt: "desc" },
-    include: { company: true }
+    orderBy: { createdAt: "desc" }
   });
 
+  const companyIds = items.map((x) => x.companyId);
+  const companies = await prisma.company.findMany({
+    where: { id: { in: companyIds } }
+  });
+
+  const map = new Map(companies.map((c) => [c.id, c]));
+
   res.json({
-    items: items.map((x: (typeof items)[number]) => ({
-      symbol: x.company.symbol,
-      name: x.company.name,
-      addedAt: x.createdAt
-    }))
+    items: items.map((x) => {
+      const c = map.get(x.companyId);
+      return {
+        symbol: c?.symbol ?? "",
+        name: c?.name ?? null,
+        addedAt: x.createdAt
+      };
+    })
   });
 });
 

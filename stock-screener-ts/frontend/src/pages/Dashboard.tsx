@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { clearToken } from "../api";
 
 import CompanySearch from "../components/CompanySearch";
-import Watchlist from "../components/WatchList";
+import Watchlist from "../components/Watchlist";
 import ScreenerTable from "../components/ScreenerTable";
 
 export default function Dashboard() {

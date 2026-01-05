@@ -4,11 +4,11 @@ import helmet from "helmet";
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";
 
-import { prisma } from "./db";
-import { signToken } from "./auth";
-import { watchlistRouter } from "./routes/watchlist";
-import { screenerRouter } from "./routes/screener";
-import searchRouter from "./routes/search";
+import { prisma } from "./db.js";
+import { signToken } from "./auth.js";
+import { watchlistRouter } from "./routes/watchlist.js";
+import { screenerRouter } from "./routes/screener.js";
+import searchRouter from "./routes/search.js";
 
 dotenv.config();
 
@@ -40,12 +40,13 @@ app.post("/auth/register", async (req, res) => {
 
   try {
     const passwordHash = await bcrypt.hash(password, 10);
+
     const user = await prisma.user.create({
       data: { email, password: passwordHash },
       select: { id: true, email: true }
     });
 
-    const token = signToken(user);
+    const token = signToken({ id: user.id, email: user.email });
     return res.json({ token, user });
   } catch {
     return res.status(400).json({ error: "User already exists" });

@@ -1,5 +1,6 @@
-import { prisma } from "../db";
-import { fetchStockMetrics, type StockMetrics } from "./stocks";
+import { prisma } from "../db.js";
+import { fetchStockMetrics, type StockMetrics } from "./stocks.js";
+
 
 const TTL_MINUTES = 15;
 

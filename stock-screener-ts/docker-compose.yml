@@ -1,0 +1,35 @@
+services:
+  backend:
+    build:
+      context: ./backend
+    container_name: stock-backend
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: 3000
+      NODE_ENV: production
+
+      DATABASE_URL: file:/app/prisma/dev.db
+
+      JWT_SECRET: ${JWT_SECRET}
+      FINNHUB_TOKEN: ${FINNHUB_TOKEN}
+
+      CORS_ORIGIN: http://localhost:8080
+    volumes:
+      - sqlite_data:/app/prisma
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_BASE: http://localhost:3000
+    container_name: stock-frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  sqlite_data:
