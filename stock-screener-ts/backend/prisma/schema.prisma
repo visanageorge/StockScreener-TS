@@ -1,0 +1,53 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int        @id @default(autoincrement())
+  email     String     @unique
+  password  String
+  createdAt DateTime   @default(now())
+
+  watchlist Watchlist[]
+}
+
+model Company {
+  id        Int        @id @default(autoincrement())
+  symbol    String     @unique
+  name      String?
+  createdAt DateTime   @default(now())
+
+  watchlist Watchlist[]
+  snapshots Snapshot[]
+}
+
+model Watchlist {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  companyId Int
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, companyId])
+  @@index([userId])
+  @@index([companyId])
+}
+
+model Snapshot {
+  id        Int      @id @default(autoincrement())
+  companyId Int
+  fetchedAt DateTime @default(now())
+  data      String
+
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@index([companyId])
+  @@index([fetchedAt])
+}

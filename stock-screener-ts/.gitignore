@@ -1,0 +1,37 @@
+# ===============================
+# Node / JavaScript / TypeScript
+# ===============================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build outputs
+dist/
+build/
+.out/
+
+# ===============================
+# Environment variables
+# ===============================
+.env
+.env.*
+!.env.example
+
+# ===============================
+# Prisma
+# ===============================
+# SQLite database
+*.db
+*.db-journal
+
+# Prisma generated client (re-generable)
+node_modules/.prisma/
+
+# Prisma migrations lock (optional)
+prisma/migrations/migration_lock.toml
+
+# ===============================
+# Frontend (Vite / React)
+# ==============
