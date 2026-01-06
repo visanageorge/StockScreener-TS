@@ -34,6 +34,22 @@ The project is fully **Dockerized** (frontend + backend) and can be started with
 
 ---
 
+## 📸 Screenshots
+
+<p align="center">
+  <img src="screenshots/login.png" width="800" />
+</p>
+
+<p align="center">
+  <img src="screenshots/app2.png" width="900" />
+</p>
+
+<p align="center">
+  <img src="screenshots/register.png" width="900" />
+</p>
+
+---
+
 ## 🛠 Tech Stack
 
 ### Frontend
